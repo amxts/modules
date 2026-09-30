@@ -79,17 +79,17 @@ describe('its repository and npm package', () => {
     expect(messages(community, () => {})).toEqual([])
   })
 
-  test('not on npm yet, with a local link to the core: a warning for an official module, an error for a community one', () => {
+  test('not on npm yet, with a local link to the core: an error, a warning for an official module while OFFICIAL_ON_NPM is off', () => {
     const unpublished = (facts: Facts) => {
       facts.npm = null
       facts.repo!.packageJson!.peerDependencies = { '@amxts/core': 'file:../../amxts' }
     }
-    expect(messages(official, unpublished)).toEqual([
+    expect(messages(official, unpublished, false)).toEqual([
       'warning: `@amxts/core` is `file:../../amxts` in peerDependencies, a local link: publish it with a version range, such as `^0.1.0` (an error for a community module)',
       'warning: `@amxts/menu-core` is not on npm (an error for a community module)',
     ])
     expect(messages(community, unpublished).map(each => each.split(':')[0])).toEqual(['error', 'error'])
-    expect(messages(official, unpublished, true).map(each => each.split(':')[0])).toEqual(['error', 'error'])
+    expect(messages(official, unpublished).map(each => each.split(':')[0])).toEqual(['error', 'error'])
   })
 
   test('once on npm, what the module asks of the core is read off npm: its repository may link the core\'s folder', () => {
@@ -130,7 +130,7 @@ describe('its repository and npm package', () => {
       delete facts.repo!.packageJson!.peerDependencies
     })).toEqual([
       'error: package.json has no `@amxts/core` in `peerDependencies`',
-      'warning: `@amxts/menu-core` is not on npm (an error for a community module)',
+      'error: `@amxts/menu-core` is not on npm',
     ])
   })
 

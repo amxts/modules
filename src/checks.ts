@@ -39,10 +39,10 @@ const localSpec = /^(?:file|link|workspace|portal):/
 
 /**
  * Whether an official module must be on npm, as a community one must. The
- * official modules were listed before they were published, so for them "not
- * on npm" is a warning while this is false.
+ * official modules were listed before they were published; while this is
+ * false, "not on npm" is a warning for them.
  */
-export const OFFICIAL_ON_NPM = false
+export const OFFICIAL_ON_NPM = true
 
 /**
  * What an entry's repository and npm package break. `core` is the version

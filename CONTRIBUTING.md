@@ -67,11 +67,11 @@ An official module is made by the amxts team: `@amxts/<name>` on npm and
 that scope and that organization, and an official module uses both. Every
 other module is `type: community`, under its author's name.
 
-The official modules are listed before they are published: for them, "not on
-npm yet" and a local link to the core in `peerDependencies` are warnings,
-while for a community module they are errors. Once they are on npm,
-`OFFICIAL_ON_NPM` in `src/checks.ts` is `true`, and both are errors for them
-too.
+An official module passes the same checks as a community one: it is on npm,
+and asks for the core by a version range. (`OFFICIAL_ON_NPM` in
+`src/checks.ts` set to `false` makes "not on npm yet" and a local link to the
+core in `peerDependencies` warnings for official modules, for listing one
+before it is published.)
 
 What a module asks of the core is read off its package on npm once it is
 published, else off its repository: a repository may link the core's folder in
