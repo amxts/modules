@@ -1,0 +1,8 @@
+name: not-the-file-name
+npm: amxts-renamed
+repo: someone/amxts-renamed
+description: Its name is not its file's
+category: tools
+type: community
+maintainers:
+  - github: someone

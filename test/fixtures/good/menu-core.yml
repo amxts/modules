@@ -1,0 +1,9 @@
+name: menu-core
+npm: "@amxts/menu-core"
+repo: amxts/menu-core
+description: Menus from INI, YAML or JSON files, with conditions and placeholders
+category: ui
+type: official
+logo: assets/logo.svg
+maintainers:
+  - github: kukson777

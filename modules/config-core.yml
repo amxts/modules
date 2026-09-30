@@ -1,0 +1,9 @@
+name: config-core
+npm: "@amxts/config-core"
+repo: amxts/config-core
+description: Configs in INI, YAML or JSON, read into typed objects and written back
+category: config
+type: official
+logo: assets/logo.svg
+maintainers:
+  - github: kukson777

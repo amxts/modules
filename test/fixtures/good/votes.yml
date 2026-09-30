@@ -1,0 +1,10 @@
+# a community module: under its author's name on npm and GitHub, no logo
+name: votes
+npm: amxts-votes
+repo: someone/amxts-votes
+description: Map and kick votes with a menu
+category: gameplay
+type: community
+maintainers:
+  - github: someone
+  - github: someone-else

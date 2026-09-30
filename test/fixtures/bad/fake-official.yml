@@ -1,0 +1,8 @@
+name: fake-official
+npm: amxts-fake-official
+repo: someone/amxts-fake-official
+description: Says it is official
+category: tools
+type: official
+maintainers:
+  - github: someone

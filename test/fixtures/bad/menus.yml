@@ -1,0 +1,8 @@
+name: menus
+npm: menu-c0re
+repo: someone/menus
+description: The same package as menu-c0re
+category: ui
+type: community
+maintainers:
+  - github: someone

@@ -1,0 +1,8 @@
+name: claims-scope
+npm: "@amxts/claims-scope"
+repo: someone/claims-scope
+description: A community module under the official scope
+category: tools
+type: community
+maintainers:
+  - github: someone

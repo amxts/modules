@@ -1,0 +1,8 @@
+name: wrong-fields
+npm: amxts-wrong-fields
+description: No repository, a category and a field that do not exist
+category: menus
+stars: 1000
+type: community
+logo: ../../secret.svg
+maintainers: someone

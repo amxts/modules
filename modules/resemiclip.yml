@@ -1,0 +1,9 @@
+name: resemiclip
+npm: "@amxts/resemiclip"
+repo: amxts/resemiclip
+description: Semiclip over the ReSemiclip module - who walks through whom, as a rule over two players
+category: gameplay
+type: official
+logo: assets/logo.svg
+maintainers:
+  - github: kukson777
