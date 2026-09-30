@@ -69,7 +69,14 @@ other module is `type: community`, under its author's name.
 
 The official modules are listed before they are published: for them, "not on
 npm yet" and a local link to the core in `peerDependencies` are warnings,
-while for a community module they are errors.
+while for a community module they are errors. Once they are on npm,
+`OFFICIAL_ON_NPM` in `src/checks.ts` is `true`, and both are errors for them
+too.
+
+What a module asks of the core is read off its package on npm once it is
+published, else off its repository: a repository may link the core's folder in
+`peerDependencies`, as a checkout beside the core does, and publish it with a
+version range.
 
 ## Changing or removing an entry
 

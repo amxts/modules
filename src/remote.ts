@@ -41,11 +41,11 @@ async function repoFacts(entry: Entry): Promise<Facts['repo']> {
 }
 
 async function npmFacts(entry: Entry): Promise<Facts['npm']> {
-  const latest = await json<{ version: string, repository?: string | { url?: string } }>(`https://registry.npmjs.org/${entry.npm.replace('/', '%2F')}/latest`)
+  const latest = await json<{ version: string, repository?: string | { url?: string }, peerDependencies?: Record<string, string> }>(`https://registry.npmjs.org/${entry.npm.replace('/', '%2F')}/latest`)
   if (!latest)
     return null
   const url = typeof latest.repository === 'string' ? latest.repository : latest.repository?.url
-  return { version: latest.version, repo: githubRepo(url) }
+  return { version: latest.version, repo: githubRepo(url), peerDependencies: latest.peerDependencies }
 }
 
 export async function fetchFacts(entry: Entry): Promise<Facts> {

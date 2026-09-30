@@ -21,7 +21,7 @@ function factsOf(entry: Entry, change: (facts: Facts) => void = () => {}): Facts
       logo: true,
       packageJson: { name: entry.npm, amxts: { module: 'src/index.ts' }, scripts: { test: 'bun test' }, peerDependencies: { '@amxts/core': '^0.1.0' } },
     },
-    npm: { version: '1.0.0', repo: entry.repo },
+    npm: { version: '1.0.0', repo: entry.repo, peerDependencies: { '@amxts/core': '^0.1.0' } },
   }
   change(facts)
   return facts
@@ -30,7 +30,7 @@ function factsOf(entry: Entry, change: (facts: Facts) => void = () => {}): Facts
 const entries = Object.fromEntries(readEntries(join(fixtures, 'good')).map(each => [each.entry!.name, each.entry!]))
 const official = entries['menu-core']!
 const community = entries.votes!
-const messages = (entry: Entry, change: (facts: Facts) => void) => checkFacts(entry, factsOf(entry, change), core).map(each => `${each.level}: ${each.message}`)
+const messages = (entry: Entry, change: (facts: Facts) => void, officialOnNpm?: boolean) => checkFacts(entry, factsOf(entry, change), core, officialOnNpm).map(each => `${each.level}: ${each.message}`)
 
 describe('an entry', () => {
   test('good ones pass', async () => {
@@ -89,6 +89,18 @@ describe('its repository and npm package', () => {
       'warning: `@amxts/menu-core` is not on npm (an error for a community module)',
     ])
     expect(messages(community, unpublished).map(each => each.split(':')[0])).toEqual(['error', 'error'])
+    expect(messages(official, unpublished, true).map(each => each.split(':')[0])).toEqual(['error', 'error'])
+  })
+
+  test('once on npm, what the module asks of the core is read off npm: its repository may link the core\'s folder', () => {
+    const linkedCheckout = (facts: Facts) => { facts.repo!.packageJson!.peerDependencies = { '@amxts/core': 'file:../../amxts' } }
+    expect(messages(official, linkedCheckout, true)).toEqual([])
+    expect(messages(community, (facts) => { facts.npm!.peerDependencies = { '@amxts/core': 'file:../../amxts' } })).toEqual([
+      'error: `@amxts/core` is `file:../../amxts` in peerDependencies, a local link: publish it with a version range, such as `^0.1.0`',
+    ])
+    expect(messages(community, (facts) => { delete facts.npm!.peerDependencies })).toEqual([
+      'error: `amxts-votes` on npm has no `@amxts/core` in `peerDependencies`',
+    ])
   })
 
   test('the repository is missing, or misses a README, a LICENSE or its logo', () => {
@@ -106,14 +118,19 @@ describe('its repository and npm package', () => {
     ])
     expect(messages(community, (facts) => {
       facts.repo!.packageJson = { name: 'votes', scripts: { postinstall: 'node steal.js' }, peerDependencies: { '@amxts/core': '^2.0.0' } }
+      facts.npm!.peerDependencies = { '@amxts/core': '^2.0.0' }
     })).toEqual([
       'error: package.json names the package `votes`, not `amxts-votes`',
       'error: package.json has no `amxts.module`: it is not an amxts module',
       'error: package.json has a `postinstall` script: a module installs without running code',
       'error: `@amxts/core` is `^2.0.0` in peerDependencies, and the current core, 0.1.0, is not in it',
     ])
-    expect(messages(community, (facts) => { delete facts.repo!.packageJson!.peerDependencies })).toEqual([
+    expect(messages(official, (facts) => {
+      facts.npm = null
+      delete facts.repo!.packageJson!.peerDependencies
+    })).toEqual([
       'error: package.json has no `@amxts/core` in `peerDependencies`',
+      'warning: `@amxts/menu-core` is not on npm (an error for a community module)',
     ])
   })
 

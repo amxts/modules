@@ -20,6 +20,8 @@ export interface Facts {
     version: string
     /** the GitHub repository its latest version points at, `owner/name` */
     repo: string | null
+    /** its latest version's peerDependencies */
+    peerDependencies?: Record<string, string>
   } | null
 }
 
@@ -36,20 +38,29 @@ const installScripts = ['preinstall', 'install', 'postinstall']
 const localSpec = /^(?:file|link|workspace|portal):/
 
 /**
+ * Whether an official module must be on npm, as a community one must. The
+ * official modules were listed before they were published, so for them "not
+ * on npm" is a warning while this is false.
+ */
+export const OFFICIAL_ON_NPM = false
+
+/**
  * What an entry's repository and npm package break. `core` is the version
  * of @amxts/core a module must take. A check that needs the module published
- * is an error for a community module, and a warning for an official one:
- * those are listed before they are on npm.
+ * is an error, and a warning for an official one until `officialOnNpm`.
+ * What the module asks of the core is read off its package on npm once it is
+ * there - a checkout may link the core's folder - else off its repository.
  */
-export function checkFacts(entry: Entry, facts: Facts, core: string): Problem[] {
-  const beforePublishing = entry.type === 'official' ? warning : error
-  const note = entry.type === 'official' ? ' (an error for a community module)' : ''
+export function checkFacts(entry: Entry, facts: Facts, core: string, officialOnNpm = OFFICIAL_ON_NPM): Problem[] {
+  const lenient = entry.type === 'official' && !officialOnNpm
+  const beforePublishing = lenient && !facts.npm ? warning : error
+  const note = lenient && !facts.npm ? ' (an error for a community module)' : ''
   const repo = facts.repo
   if (!repo)
     return [error(`github.com/${entry.repo} is not a public repository`)]
 
   const pkg = repo.packageJson
-  const peer = pkg?.peerDependencies?.['@amxts/core']
+  const peer = (facts.npm ? facts.npm.peerDependencies : pkg?.peerDependencies)?.['@amxts/core']
   const problems: [boolean, Problem][] = [
     [repo.archived, warning(`github.com/${entry.repo} is archived`)],
     [!repo.readme, error('the repository has no README')],
@@ -59,7 +70,7 @@ export function checkFacts(entry: Entry, facts: Facts, core: string): Problem[] 
     [!!pkg && pkg.name !== entry.npm, error(`package.json names the package \`${pkg?.name}\`, not \`${entry.npm}\``)],
     [!!pkg && !pkg.amxts?.module, error('package.json has no `amxts.module`: it is not an amxts module')],
     ...installScripts.map((script): [boolean, Problem] => [!!pkg?.scripts?.[script], error(`package.json has a \`${script}\` script: a module installs without running code`)]),
-    [!!pkg && !peer, error('package.json has no `@amxts/core` in `peerDependencies`')],
+    [!!pkg && !peer, error(`${facts.npm ? `\`${entry.npm}\` on npm` : 'package.json'} has no \`@amxts/core\` in \`peerDependencies\``)],
     [!!peer && localSpec.test(peer), beforePublishing(`\`@amxts/core\` is \`${peer}\` in peerDependencies, a local link: publish it with a version range, such as \`^${core}\`${note}`)],
     [!!peer && !localSpec.test(peer) && !satisfies(core, peer), error(`\`@amxts/core\` is \`${peer}\` in peerDependencies, and the current core, ${core}, is not in it`)],
     [!facts.npm, beforePublishing(`\`${entry.npm}\` is not on npm${note}`)],
