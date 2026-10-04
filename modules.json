@@ -15,6 +15,21 @@
     "requires": []
   },
   {
+    "name": "ftp",
+    "npm": "@amxts/ftp",
+    "repo": "amxts/ftp",
+    "description": "FTP, FTPS and SFTP - upload, download and list files on another server, every call a promise",
+    "category": "network",
+    "type": "official",
+    "logo": "https://raw.githubusercontent.com/amxts/ftp/HEAD/assets/logo.svg",
+    "maintainers": [
+      {
+        "github": "kukson777"
+      }
+    ],
+    "requires": []
+  },
+  {
     "name": "menu-core",
     "npm": "@amxts/menu-core",
     "repo": "amxts/menu-core",
