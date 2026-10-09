@@ -103,6 +103,10 @@ describe('its repository and npm package', () => {
     ])
   })
 
+  test('a module that runs on two lines of the core names both', () => {
+    expect(messages(community, (facts) => { facts.npm!.peerDependencies = { '@amxts/core': '^0.0.9 || ^0.1.0' } })).toEqual([])
+  })
+
   test('the repository is missing, or misses a README, a LICENSE or its logo', () => {
     expect(messages(community, (facts) => { facts.repo = null })).toEqual(['error: github.com/someone/amxts-votes is not a public repository'])
     expect(messages(official, (facts) => { Object.assign(facts.repo!, { readme: false, license: false, logo: false }) })).toEqual([
