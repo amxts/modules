@@ -1,0 +1,9 @@
+name: perms
+npm: "@amxts/perms"
+repo: amxts/perms
+description: Permissions and groups in place of admin.amxx, with a web editor
+category: admin
+type: official
+logo: assets/logo.svg
+maintainers:
+  - github: kukson777
